@@ -1,0 +1,70 @@
+
+#include <Braccio.h> 
+#include <Servo.h>
+
+Servo base;
+Servo shoulder;
+Servo elbow;
+Servo wrist_rot;
+Servo wrist_ver;
+Servo gripper;	
+
+
+    const float l1 = 12.5; 
+    const float l2 = 12.5; 
+    const float l3 = 7.15; 
+
+    void IK(float X, float Y, float phi){
+   
+        float x2;
+        x2 = X - (l3 * cos(radians(phi)));
+        float y2;
+        y2 = Y - (l3 * sin(radians(phi)));
+   
+        float d = sqrt(pow(x2, 2) + pow(y2, 2));
+
+    
+    
+        if ((l1 + l2) >= d){
+        
+    
+float A = degrees(acos((pow(l1, 2) + pow(d, 2) - pow(l2, 2)) / (2 * l1 * d)));
+
+float theta_A = degrees(atan2(y2, x2)) - A;
+        
+        
+float B = degrees(acos((pow(l1, 2) + pow(l2, 2)- pow(d, 2)) / (2 * l1* l2)));                  
+
+float theta_B = 180 - B;
+
+       
+    
+  float theta_C = phi - (theta_A + theta_B) ;
+      
+        Braccio.ServoMovement(20,0,int(theta_A),90+int(theta_B),
+                                  90+int(theta_C),65,73); 
+        }	
+
+     }
+
+
+
+
+void setup() {
+                Serial.begin(9600); 
+                delay(1000);
+                Braccio.begin(); 
+}
+
+void loop() {
+    
+    float x = ;
+    float y = ; 
+    float phi = ;
+ 
+    IK(x, y, phi);
+    delay(5000);
+    Braccio.ServoMovement(20,           0,  15, 180, 170, 0,  73);  
+    delay(1000);
+
+}
